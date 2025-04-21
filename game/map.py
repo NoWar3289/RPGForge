@@ -8,15 +8,47 @@ class Map:
         self.add_border_to_map()
         
     def load_map(self, file_path):
-        """Load map data from a file"""
-        with open(file_path, 'r') as f:
-            map_data = [[int(num) for num in line.strip().split()] for line in f]
-        
-        # Update global map dimensions
-        settings.MAP_HEIGHT = len(map_data)
-        settings.MAP_WIDTH = len(map_data[0]) if settings.MAP_HEIGHT > 0 else 0
-        
-        return map_data
+        """Load map data from a file of any dimensions"""
+        try:
+            with open(file_path, 'r') as f:
+                lines = [line.strip() for line in f if line.strip()]
+                
+                # First determine the maximum width
+                max_width = 0
+                for line in lines:
+                    # Split by any whitespace (space, tab) and count elements
+                    nums = line.split()
+                    max_width = max(max_width, len(nums))
+                
+                # Now create the map data with consistent width
+                map_data = []
+                for line in lines:
+                    nums = [int(num) for num in line.split()]
+                    # Pad with grass (1) if the row is shorter than max_width
+                    while len(nums) < max_width:
+                        nums.append(1)  # Use grass (1) as default filler
+                    map_data.append(nums)
+            
+            # Update global map dimensions
+            settings.MAP_HEIGHT = len(map_data)
+            settings.MAP_WIDTH = max_width
+            
+            return map_data
+            
+        except FileNotFoundError:
+            print(f"Map file not found: {file_path}")
+            # Return a small default map if file not found
+            default_map = [[1, 1, 1], [1, 0, 1], [1, 1, 1]]  # Simple 3x3 map with spawn in center
+            settings.MAP_HEIGHT = len(default_map)
+            settings.MAP_WIDTH = len(default_map[0])
+            return default_map
+        except Exception as e:
+            print(f"Error loading map: {e}")
+            # Return a minimal map in case of other errors
+            default_map = [[1, 0, 1], [1, 1, 1]]
+            settings.MAP_HEIGHT = len(default_map)
+            settings.MAP_WIDTH = len(default_map[0])
+            return default_map
     
     def add_border_to_map(self):
         """Add a border of bedrock around the map"""
@@ -35,7 +67,7 @@ class Map:
         """Find the spawn point (tile 0) in the map"""
         for y in range(settings.MAP_HEIGHT):
             for x in range(settings.MAP_WIDTH):
-                if self.data[y][x] == 0:  # 0 is the spawn tile (bridge)
+                if self.data[y][x] == 0:  # 0 is the spawn tile
                     return pygame.Vector2(x, y)
         
         # Fallback to position 1,1 if no spawn point found
@@ -44,12 +76,13 @@ class Map:
     def get_tile_name(self, tile_id):
         """Get the name of a tile based on its ID"""
         return {
-            0: "Bridge",
+            0: "Spawn",
             1: "Grass",
-            2: "Stone",
-            3: "Water",
+            2: "Walls",
+            3: "WStone",
             4: "Tree",
             5: "Grass Alt",
+            9: "Water",
             10: "Bedrock"
         }.get(tile_id, "Unknown")
     

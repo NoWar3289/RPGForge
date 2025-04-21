@@ -11,7 +11,8 @@ MAP_WIDTH = 0
 MAP_HEIGHT = 0
 
 # Collidable tiles
-COLLIDABLE_TILES = [3, 4, 10]  # Water, trees, and bedrock
+# COLLIDABLE_TILES = [3, 4, 10]  # Water, trees, and bedrock
+COLLIDABLE_TILES = [9, 4, 10]  # Water, trees, and bedrock
 
 # Global game state
 points = 0

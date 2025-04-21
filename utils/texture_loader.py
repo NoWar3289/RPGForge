@@ -20,13 +20,23 @@ def get_texture(path, size=TILE_SIZE, use_alpha=False):
 def load_textures():
     # Tile textures
     textures = {
+        # 'grass': get_texture("./textures/tiles/grass.png"),
+        # 'water': get_texture("./textures/tiles/water.png"),
+        # 'stone': get_texture("./textures/tiles/stone.png"),
+        # 'bridge': get_texture("./textures/tiles/bridge.png"),
+        # 'tree': get_texture("./textures/tiles/tree.png"),
+        # 'grass_alt': get_texture("./textures/tiles/grass001.png"),
+
         'grass': get_texture("./textures/tiles/grass.png"),
+        'walls': get_texture("./textures/tiles/walls.png"),
+        'stone': get_texture("./textures/tiles/smooth_stone.png"),
+        'wstone': get_texture("./textures/tiles/wstone.png"),
         'water': get_texture("./textures/tiles/water.png"),
-        'stone': get_texture("./textures/tiles/stone.png"),
-        'bridge': get_texture("./textures/tiles/bridge.png"),
         'tree': get_texture("./textures/tiles/tree.png"),
-        'grass_alt': get_texture("./textures/tiles/grass001.png"),
+        'dgrass': get_texture("./textures/tiles/dgrass.png"),
+        'spawn': get_texture("./textures/tiles/spawn.png"),
         'bedrock': get_texture("./textures/tiles/bedrock.png"),
+
         
         # Player textures
         'player_default': get_texture("./textures/player/default.png", TILE_SIZE, True),
@@ -44,14 +54,23 @@ def load_textures():
     
     # Create tile mapping
     tile_mapping = {
-        0: textures['bridge'],      # spawn
-        1: textures['grass'],       # grass
-        2: textures['stone'],       # stone
-        3: textures['water'],       # water (collidable)
-        4: textures['tree'],        # tree (collidable)
-        5: textures['grass_alt'],   # more grass
-        9: textures['grass_alt'],   # more grass
-        10: textures['bedrock']     # bedrock border (collidable)
+        # 0: textures['bridge'],      # spawn
+        # 1: textures['stone'],       # grass
+        # 2: textures['stone'],       # stone
+        # 3: textures['water'],       # water (collidable)
+        # 4: textures['tree'],        # tree (collidable)
+        # 5: textures['grass_alt'],   # more grass
+        # 9: textures['grass_alt'],   # more grass
+        # 10: textures['bedrock']     # bedrock border (collidable)
+        
+        0: textures['spawn'],
+        1: textures['grass'],
+        2: textures['walls'],
+        3: textures['wstone'],
+        4: textures['tree'],
+        5: textures['dgrass'],
+        9: textures['water'],
+        10: textures['bedrock']
     }
     
     textures['tile_mapping'] = tile_mapping
