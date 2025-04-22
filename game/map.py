@@ -1,4 +1,5 @@
 import pygame
+import json
 import settings
 from settings import TILE_SIZE, MAP_WIDTH, MAP_HEIGHT
 
@@ -6,6 +7,17 @@ class Map:
     def __init__(self, file_path="./maps/map.txt"):
         self.data = self.load_map(file_path)
         self.add_border_to_map()
+        self.tile_info = self.load_tile_info()
+        
+    def load_tile_info(self):
+        """Load tile information from mapdata.json"""
+        try:
+            with open("./mapdata.json", 'r') as f:
+                map_data = json.load(f)
+                return map_data.get("tiles", {})
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"Error loading mapdata.json: {e}")
+            return {}
         
     def load_map(self, file_path):
         """Load map data from a file of any dimensions"""
@@ -53,10 +65,10 @@ class Map:
     def add_border_to_map(self):
         """Add a border of bedrock around the map"""
         bordered_map = []
-        bordered_map.append([10] * (settings.MAP_WIDTH + 2))  # Top border
+        bordered_map.append([9] * (settings.MAP_WIDTH + 2))  # Top border
         for row in self.data:
-            bordered_map.append([10] + row + [10])   # Side borders
-        bordered_map.append([10] * (settings.MAP_WIDTH + 2))  # Bottom border
+            bordered_map.append([9] + row + [9])   # Side borders
+        bordered_map.append([9] * (settings.MAP_WIDTH + 2))  # Bottom border
         
         # Update global map dimensions
         settings.MAP_WIDTH = len(bordered_map[0])
@@ -74,22 +86,26 @@ class Map:
         return pygame.Vector2(1, 1)
     
     def get_tile_name(self, tile_id):
-        """Get the name of a tile based on its ID"""
-        return {
-            0: "Spawn",
-            1: "Grass",
-            2: "Walls",
-            3: "WStone",
-            4: "Tree",
-            5: "Grass Alt",
-            9: "Water",
-            10: "Bedrock"
-        }.get(tile_id, "Unknown")
+        """Get the name of a tile based on its ID using the JSON data"""
+        tile_str_id = str(tile_id)
+        if tile_str_id in self.tile_info:
+            return self.tile_info[tile_str_id].get("name", "Unknown")
+        return "Unknown"
+    
+    def is_tile_collidable(self, tile_id):
+        """Check if a tile is collidable based on JSON data"""
+        tile_str_id = str(tile_id)
+        if tile_str_id in self.tile_info:
+            return self.tile_info[tile_str_id].get("collidable", False)
+        return False  # Default to non-collidable
     
     def draw(self, screen, textures, camera_pos):
         """Draw visible parts of the map efficiently"""
         # Calculate the visible area
         screen_width, screen_height = screen.get_width(), screen.get_height()
+        
+        # Get fallback texture
+        fallback_texture = textures.get('fallback') or textures.get(1) or next(iter(textures.values()))
         
         # Determine which tiles are visible based on camera position
         start_x = max(0, int(camera_pos.x // TILE_SIZE) - 1)
@@ -109,5 +125,10 @@ class Map:
                     -TILE_SIZE <= screen_y <= screen_height):
                     # Draw the tile
                     tile_id = self.data[y][x]
-                    texture = textures['tile_mapping'].get(tile_id, textures['grass'])  # Default to grass if unknown
+                    texture = textures['tile_mapping'].get(tile_id)
+                    
+                    # If texture is None, use fallback
+                    if texture is None:
+                        texture = fallback_texture
+                        
                     screen.blit(texture, (screen_x, screen_y))

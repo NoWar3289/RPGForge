@@ -1,0 +1,59 @@
+{
+    "tiles": {
+      "0": {
+        "name": "spawn",
+        "texture": "000.png",
+        "collidable": false
+      },
+      "1": {
+        "name": "grass",
+        "texture": "001.png",
+        "collidable": false
+      },
+      "2": {
+        "name": "stone",
+        "texture": "002.png",
+        "collidable": false
+      },
+      "3": {
+        "name": "water",
+        "texture": "003.png",
+        "collidable": true
+      },
+      "4": {
+        "name": "tree",
+        "texture": "004.png",
+        "collidable": true
+      },
+      "5": {
+        "name": "dgrass",
+        "texture": "005.png",
+        "collidable": false
+      },
+      "6": {
+        "name": "wstone",
+        "texture": "006.png",
+        "collidable": false
+      },
+      "7": {
+        "name": "walls",
+        "texture": "007.png",
+        "collidable": true
+      },
+      "8": {
+        "name": "bridge",
+        "texture": "008.png",
+        "collidable": false
+      },
+      "9": {
+        "name": "bedrock",
+        "texture": "009.png",
+        "collidable": true
+      },
+      "10": {
+        "name": "void",
+        "texture": "010.png",
+        "collidable": true
+      }
+    }
+  }
