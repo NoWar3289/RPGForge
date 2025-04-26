@@ -1,7 +1,7 @@
 import pygame
 
 # Game constants
-TILE_SIZE = 16
+TILE_SIZE = 64
 WALK_SPEED = 10
 SPRINT_SPEED = 25
 SPRINT_COOLDOWN = 3.0
