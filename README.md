@@ -1,6 +1,6 @@
 # RPGForge
 
-RPGForge is a personal project aimed at helping myself and other new developers build simple 2D RPG-style games using Python. It's designed to be a lightweight, easy-to-understand starting point for creating tile-based worlds, entities, and interactive gameplay.
+RPGForge is a personal project aimed at helping myself and other new developers build simple 2D RPG-style games using Python. It is designed to be a lightweight, easy-to-understand starting point for creating tile-based worlds, entities, and interactive gameplay.
 
 ## Why I Created RPGForge?
 
