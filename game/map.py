@@ -4,11 +4,15 @@ import settings
 from settings import TILE_SIZE, MAP_WIDTH, MAP_HEIGHT
 
 class Map:
-    def __init__(self, file_path="./maps/map.txt"):
+    def __init__(self, file_path="./maps/map000.txt"):
         self.data = self.load_map(file_path)
         self.add_border_to_map()
         self.tile_info = self.load_tile_info()
-        
+
+        self.map_number = self.extract_map_number(file_path)
+        self.data = self.load_map(file_path)
+        self.add_border_to_map()
+        self.tile_info = self.load_tile_info()
     def load_tile_info(self):
         """Load tile information from mapdata.json"""
         try:
@@ -132,3 +136,23 @@ class Map:
                         texture = fallback_texture
                         
                     screen.blit(texture, (screen_x, screen_y))
+
+
+    def extract_map_number(self, file_path):
+        """Extract map number from file path"""
+        # Default to 0 if no number in filename
+        import re
+        match = re.search(r'map(\d+)\.txt', file_path)
+        if match:
+            return int(match.group(1))
+        return 0
+    
+    def get_next_map_path(self):
+        """Get the path to the next map"""
+        next_number = self.map_number + 1
+        return f"./maps/map{next_number:03d}.txt"
+
+    def get_previous_map_path(self):
+        """Get the path to the previous map"""
+        prev_number = max(0, self.map_number - 1)
+        return f"./maps/map{prev_number:03d}.txt"

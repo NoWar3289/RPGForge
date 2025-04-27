@@ -1,6 +1,7 @@
 import pygame
 import math
-from settings import TILE_SIZE, WALK_SPEED, SPRINT_SPEED, SPRINT_COOLDOWN
+import settings
+from settings import TILE_SIZE, WALK_SPEED, SPRINT_SPEED, SPRINT_COOLDOWN, POINTS, REQUIRED_POINTS, screen
 from game.collision import is_blocked
 
 class Player:
@@ -26,6 +27,13 @@ class Player:
         
         # Collision rect
         self.rect = pygame.Rect(self.pos.x * TILE_SIZE, self.pos.y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+
+        # teleport
+        self.teleport_countdown = 0
+        self.teleporting = False
+        self.teleport_direction = None
+
+
         
     def update(self, dt, keys, map_data):
         # Reset player position if R is pressed
@@ -113,6 +121,20 @@ class Player:
         # Update collision rect
         self.rect.x = self.pos.x * TILE_SIZE
         self.rect.y = self.pos.y * TILE_SIZE
+
+        # Add this to your Player.update method, just before the return statement:
+        # Handle teleport countdown
+       # Handle teleport countdown
+        if self.teleporting:
+            self.teleport_countdown -= dt
+            if self.teleport_countdown <= 0:
+                direction = self.teleport_direction
+                self.teleporting = False
+                self.teleport_countdown = 0
+                self.teleport_direction = None
+                return direction
+        
+        return None  # Make sure to return None if not teleporting
             
     def draw(self, screen):
         screen_x = screen.get_width() / 2 - self.image.get_width() / 2
@@ -136,3 +158,31 @@ class Player:
                 "tile_name": tile_name
             }
         return None
+    
+    def check_teleportation(self, map_data):
+        """Check if player is on a teleport tile and has enough points"""
+        from settings import POINTS
+        
+        # If already teleporting, don't start another countdown
+        if self.teleporting:
+            return
+            
+        block_x = int(self.pos.x)
+        block_y = int(self.pos.y)
+        
+        # Calculate required points based on current map
+        map_number = self.game_map.map_number
+        required_points = (map_number + 1) * 5  # 5 points for map 0, 10 for map 1, etc.
+        
+        # Check if coordinates are within map boundaries
+        if 0 <= block_y < len(map_data) and 0 <= block_x < len(map_data[0]):
+            tile_id = map_data[block_y][block_x]
+            
+            if tile_id == 11 and POINTS >= required_points:
+                self.teleporting = True
+                self.teleport_countdown = 1.0
+                self.teleport_direction = "next"
+            elif tile_id == 12:
+                self.teleporting = True
+                self.teleport_countdown = 1.0
+                self.teleport_direction = "previous"

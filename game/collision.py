@@ -56,7 +56,7 @@ def process_npc_collisions(player, npcs_list):
     for npc in npcs_list:
         if player.jumping and player.rect.colliderect(npc.rect):
             npcs_to_remove.append(npc)
-            settings.points += 1
+            settings.POINTS += 1
     
     # Remove the NPCs that were jumped on
     for npc in npcs_to_remove:

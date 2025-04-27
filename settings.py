@@ -10,10 +10,9 @@ SPRINT_COOLDOWN = 3.0
 MAP_WIDTH = 0
 MAP_HEIGHT = 0
 
-# COLLIDABLE_TILES = []
-
 # Global game state
-points = 0
+POINTS = 0
+REQUIRED_POINTS = 5
 
 # Initialize pygame and create basic objects
 pygame.init()

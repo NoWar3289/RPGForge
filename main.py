@@ -7,6 +7,8 @@ from game.ui import draw_ui, draw_debug_info
 from game.collision import process_npc_collisions
 from entities.player import Player
 from entities.npc import create_npcs, NPC
+import os
+# from settings import points
 
 def main():
     # Initialize game
@@ -18,7 +20,8 @@ def main():
     textures = load_textures()
     
     # Load map
-    game_map = Map("./maps/map.txt")
+    game_map = Map("./maps/map000.txt")
+    # teleport_points_required = 5
     
     # Create player at spawn location
     player_pos = game_map.find_spawn_location()
@@ -47,6 +50,32 @@ def main():
     
         # Update player
         player.update(dt, keys, game_map.data)
+
+        # Update player
+        teleport_direction = player.update(dt, keys, game_map.data)
+        player.check_teleportation(game_map.data)
+
+        # Check if teleportation is complete
+        if teleport_direction:
+            if teleport_direction == "next":
+                next_map_path = game_map.get_next_map_path()
+                if os.path.exists(next_map_path):
+                    game_map = Map(next_map_path)
+                    player.pos = game_map.find_spawn_location()
+                    player.game_map = game_map  # Update player's game_map reference
+                    player.teleporting = False  # Reset the teleporting state
+                    # Create new NPCs for the new map
+                    npcs = create_npcs(game_map.data, 5, textures)
+            elif teleport_direction == "previous":
+                prev_map_path = game_map.get_previous_map_path()
+                if os.path.exists(prev_map_path):
+                    game_map = Map(prev_map_path)
+                    player.pos = game_map.find_spawn_location()
+                    player.game_map = game_map  # Update player's game_map reference
+                    player.teleporting = False  # Reset the teleporting state
+                    # Create new NPCs for the new map
+                    npcs = create_npcs(game_map.data, 5, textures)
+
         
         # Update camera
         camera.update(player.pos)
@@ -84,7 +113,7 @@ def main():
         player.draw(settings.screen)
         
         # Draw UI
-        draw_ui(settings.screen, player)
+        draw_ui(settings.screen, player, game_map)
         draw_debug_info(settings.screen, player, show_ui, npcs)
     
         pygame.display.flip()

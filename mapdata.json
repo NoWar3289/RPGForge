@@ -54,6 +54,16 @@
         "name": "void",
         "texture": "010.png",
         "collidable": true
+      },
+      "11": {
+        "name": "teleport_next",
+        "texture": "011.png",
+        "collidable": false
+      },
+      "12": {
+        "name": "teleport_prev",
+        "texture": "012.png",
+        "collidable": false
       }
     }
   }

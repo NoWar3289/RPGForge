@@ -1,7 +1,7 @@
 import pygame
 import settings
 
-def draw_ui(screen, player):
+def draw_ui(screen, player, game_map):
     """Draw the user interface elements"""
     # Draw sprint bar
     bar_width = 200
@@ -30,9 +30,30 @@ def draw_ui(screen, player):
         cooldown_text = settings.font.render(f"Cooldown: {player.sprint_cooldown:.1f}s", True, (255, 200, 200))
         screen.blit(cooldown_text, (bar_x + bar_width + 10, bar_y))
     
+    
+    # Display current map
+    map_text = settings.font.render(f"Map: {game_map.map_number}", True, (255, 255, 255))
+    screen.blit(map_text, (15, bar_y - 75))
+    
+    current_block = player.get_current_block()
+    if current_block and current_block['tile_name'] == 'teleport_next':
+        # Calculate required points based on current map
+        map_number = game_map.map_number
+        required_points = (map_number + 1) * 5  # 5 points for map 0, 10 for map 1, etc.
+        
+        if player.teleporting:
+            countdown_text = settings.font.render(f"Teleporting", True, (100, 255, 100))
+            countdown_rect = countdown_text.get_rect(center=(screen.get_width() // 2, countdown_text.get_height() // 2 + 15))
+            screen.blit(countdown_text, countdown_rect)
+        elif settings.POINTS < required_points:
+            required_text = settings.font.render(f"Need {required_points} points to teleport", True, (255, 200, 100))
+            required_rect = required_text.get_rect(center=(screen.get_width() // 2, required_text.get_height() // 2 + 15))
+            screen.blit(required_text, required_rect)
+
     # Draw points counter
-    points_text = settings.font.render(f"Points: {settings.points}", True, (255, 255, 255))
+    points_text = settings.font.render(f"Points: {settings.POINTS}", True, (255, 255, 255))
     screen.blit(points_text, (15, bar_y - 50))
+    # screen.blit(points_text, (15, bar_y - 100))
 
 def draw_debug_info(screen, player, show_ui, npcs):
     """Draw debug information when UI is enabled"""
