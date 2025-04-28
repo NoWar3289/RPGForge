@@ -1,5 +1,6 @@
 import pygame
 import settings
+import os
 from utils.texture_loader import load_textures
 from game.map import Map
 from game.camera import Camera
@@ -7,8 +8,7 @@ from game.ui import draw_ui, draw_debug_info
 from game.collision import process_npc_collisions
 from entities.player import Player
 from entities.npc import create_npcs, NPC
-import os
-# from settings import points
+from utils.sound_manager import play_bgm, GameSounds, play_sound
 
 def main():
     # Initialize game
@@ -18,7 +18,11 @@ def main():
     
     # Load textures
     textures = load_textures()
-    
+
+    if settings.SOUND_ENABLED:
+        play_bgm(GameSounds.MAIN_THEME, settings.MUSIC_VOLUME)
+        play_sound(GameSounds.GAME_START, settings.SFX_VOLUME)
+
     # Load map
     game_map = Map("./maps/map000.txt")
     # teleport_points_required = 5
@@ -55,7 +59,7 @@ def main():
         teleport_direction = player.update(dt, keys, game_map.data)
         player.check_teleportation(game_map.data)
 
-        # Check if teleportation is complete
+       # Check if teleportation is complete
         if teleport_direction:
             if teleport_direction == "next":
                 next_map_path = game_map.get_next_map_path()
@@ -66,6 +70,8 @@ def main():
                     player.teleporting = False  # Reset the teleporting state
                     # Create new NPCs for the new map
                     npcs = create_npcs(game_map.data, 5, textures)
+                    # Play level complete sound
+                    play_sound(GameSounds.LEVEL_COMPLETE, settings.SFX_VOLUME)
             elif teleport_direction == "previous":
                 prev_map_path = game_map.get_previous_map_path()
                 if os.path.exists(prev_map_path):
@@ -75,6 +81,8 @@ def main():
                     player.teleporting = False  # Reset the teleporting state
                     # Create new NPCs for the new map
                     npcs = create_npcs(game_map.data, 5, textures)
+                    # Play level change sound
+                    play_sound(GameSounds.LEVEL_COMPLETE, settings.SFX_VOLUME * 0.7)
 
         
         # Update camera

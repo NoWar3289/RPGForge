@@ -14,6 +14,11 @@ MAP_HEIGHT = 0
 POINTS = 0
 REQUIRED_POINTS = 5
 
+# Sound effects
+SOUND_ENABLED = True
+MUSIC_VOLUME = 0.3
+SFX_VOLUME = 0.5
+
 # Initialize pygame and create basic objects
 pygame.init()
 screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE)

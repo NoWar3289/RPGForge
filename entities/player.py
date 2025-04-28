@@ -3,6 +3,8 @@ import math
 import settings
 from settings import TILE_SIZE, WALK_SPEED, SPRINT_SPEED, SPRINT_COOLDOWN, POINTS, REQUIRED_POINTS, screen
 from game.collision import is_blocked
+from utils.sound_manager import play_sound, GameSounds
+import random
 
 class Player:
     def __init__(self, pos, textures, game_map):
@@ -62,6 +64,11 @@ class Player:
                 self.sprinting = True
                 movement_speed = SPRINT_SPEED
                 self.sprint_energy -= self.energy_use_rate * dt
+
+                # Add sound with slight delay for better experience
+                if random.random() < 0.2:  # Only play sprint sound occasionally
+                    play_sound(GameSounds.PLAYER_SPRINT, settings.SFX_VOLUME * 0.7)
+
                 if self.sprint_energy <= 0:
                     self.sprint_energy = 0
                     self.sprinting = False
@@ -93,6 +100,7 @@ class Player:
             self.jumping = True
             self.jump_time = 0
             self.key_press = True
+            play_sound(GameSounds.PLAYER_JUMP, settings.SFX_VOLUME)
             
         if self.jumping:
             self.jump_time += dt
@@ -117,6 +125,13 @@ class Player:
                 self.pos.y = target_y.y
                 
             self.image = new_image
+
+            # Add footstep sounds with timing based on speed
+            self.footstep_timer = getattr(self, 'footstep_timer', 0) + dt
+            step_interval = 0.4 if not self.sprinting else 0.2
+            if self.footstep_timer >= step_interval:
+                play_sound(GameSounds.PLAYER_WALK, settings.SFX_VOLUME * 0.4)
+                self.footstep_timer = 0
         
         # Update collision rect
         self.rect.x = self.pos.x * TILE_SIZE
@@ -126,9 +141,11 @@ class Player:
         # Handle teleport countdown
        # Handle teleport countdown
         if self.teleporting:
+            # print(f"Teleporting countdown: {self.teleport_countdown:.2f}s to {self.teleport_direction}")
             self.teleport_countdown -= dt
             if self.teleport_countdown <= 0:
                 direction = self.teleport_direction
+                print(f"Teleport complete! Direction: {direction}")
                 self.teleporting = False
                 self.teleport_countdown = 0
                 self.teleport_direction = None
@@ -159,6 +176,7 @@ class Player:
             }
         return None
     
+    # In player.py, update the check_teleportation method
     def check_teleportation(self, map_data):
         """Check if player is on a teleport tile and has enough points"""
         from settings import POINTS
@@ -166,7 +184,7 @@ class Player:
         # If already teleporting, don't start another countdown
         if self.teleporting:
             return
-            
+                
         block_x = int(self.pos.x)
         block_y = int(self.pos.y)
         
@@ -178,11 +196,13 @@ class Player:
         if 0 <= block_y < len(map_data) and 0 <= block_x < len(map_data[0]):
             tile_id = map_data[block_y][block_x]
             
-            if tile_id == 11 and POINTS >= required_points:
+            if tile_id == 11 and POINTS >= required_points:  # Next map teleport
                 self.teleporting = True
-                self.teleport_countdown = 1.0
+                self.teleport_countdown = 0.9  # Reduced from 1.0 to 0.5 seconds
                 self.teleport_direction = "next"
-            elif tile_id == 12:
+                play_sound(GameSounds.PLAYER_TELEPORT, settings.SFX_VOLUME)
+            elif tile_id == 12:  # Previous map teleport
                 self.teleporting = True
-                self.teleport_countdown = 1.0
+                self.teleport_countdown = 0.9  # Reduced from 1.0 to 0.5 seconds
                 self.teleport_direction = "previous"
+                play_sound(GameSounds.PLAYER_TELEPORT, settings.SFX_VOLUME)

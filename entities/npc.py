@@ -3,6 +3,9 @@ import random
 import math
 from settings import TILE_SIZE
 from game.collision import is_blocked
+from utils.sound_manager import play_sound, GameSounds
+import random
+import settings
 
 class NPC:
     def __init__(self, x, y, textures):
@@ -25,6 +28,12 @@ class NPC:
         if not self.jumping and random.random() < 0.01:
             self.jumping = True
             self.jump_timer = 0
+            
+            # Only play sound if NPC is close to player (for performance and realism)
+            dx = abs(self.pos.x - player.pos.x)
+            dy = abs(self.pos.y - player.pos.y)
+            if dx < 10 and dy < 10:
+                play_sound(GameSounds.NPC_JUMP, settings.SFX_VOLUME * 0.3)
             
         if self.jumping:
             self.jump_timer += dt

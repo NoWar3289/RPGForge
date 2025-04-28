@@ -1,5 +1,7 @@
 import settings
 import json
+from utils.sound_manager import play_sound, GameSounds
+
 
 def load_collision_data():
     """Load collision data from mapdata.json and update settings"""
@@ -57,6 +59,8 @@ def process_npc_collisions(player, npcs_list):
         if player.jumping and player.rect.colliderect(npc.rect):
             npcs_to_remove.append(npc)
             settings.POINTS += 1
+            play_sound(GameSounds.NPC_HIT, settings.SFX_VOLUME)
+            play_sound(GameSounds.POINT_COLLECT, settings.SFX_VOLUME * 0.7)
     
     # Remove the NPCs that were jumped on
     for npc in npcs_to_remove:

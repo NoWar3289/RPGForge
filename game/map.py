@@ -140,11 +140,11 @@ class Map:
 
     def extract_map_number(self, file_path):
         """Extract map number from file path"""
-        # Default to 0 if no number in filename
         import re
         match = re.search(r'map(\d+)\.txt', file_path)
         if match:
             return int(match.group(1))
+        print(f"Warning: Could not extract map number from {file_path}, defaulting to 0")
         return 0
     
     def get_next_map_path(self):
