@@ -20,7 +20,12 @@ After graduating high school, I found myself with a lot of free time and a growi
     pip install pygame
    ```
 
-4. **Run it:**
+4. **Change the directory**
+```bash
+    cd RPGForge
+   ```
+
+5. **Run it:**
 ```bash
     python main.py
    ```
