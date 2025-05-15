@@ -12,7 +12,7 @@ After graduating high school, I found myself with a lot of free time and a growi
 
 2. **Clone the repository:**
 ```bash
-    git clone https://github.com/NoWar3289/RPGForge.git
+    git clone https://github.com/manisharavindh/RPGForge.git
    ```
 
 3. **Install dependencies:**
